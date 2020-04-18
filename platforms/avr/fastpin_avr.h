@@ -1,8 +1,6 @@
 #ifndef __INC_FASTPIN_AVR_H
 #define __INC_FASTPIN_AVR_H
 
-FASTLED_NAMESPACE_BEGIN
-
 #if defined(FASTLED_FORCE_SOFTWARE_PINS)
 #warning "Software pin support forced, pin access will be slightly slower."
 #define NO_HARDWARE_PIN_SUPPORT
@@ -10,42 +8,46 @@ FASTLED_NAMESPACE_BEGIN
 
 #else
 
+#include "../../common_defs.h"
+
 #define AVR_PIN_CYCLES(_PIN) ((((int)FastPin<_PIN>::port())-0x20 < 64) ? 1 : 2)
 
 /// Class definition for a Pin where we know the port registers at compile time for said pin.  This allows us to make
 /// a lot of optimizations, as the inlined hi/lo methods will devolve to a single io register write/bitset.
-template<uint8_t PIN, uint8_t _MASK, typename _PORT, typename _DDR, typename _PIN> class _AVRPIN {
-public:
-	typedef volatile uint8_t * port_ptr_t;
-	typedef uint8_t port_t;
+template <uint8_t PIN, uint8_t _MASK, typename _PORT, typename _DDR, typename _PIN>
+class _AVRPIN {
+  public:
+    typedef volatile uint8_t *port_ptr_t;
+    typedef uint8_t port_t;
 
-	inline static void setOutput() { _DDR::r() |= _MASK; }
-	inline static void setInput() { _DDR::r() &= ~_MASK; }
+    inline static void setOutput() { _DDR::r() |= _MASK; }
+    inline static void setInput() { _DDR::r() &= ~_MASK; }
 
-	inline static void hi() __attribute__ ((always_inline)) { _PORT::r() |= _MASK; }
-	inline static void lo() __attribute__ ((always_inline)) { _PORT::r() &= ~_MASK; }
-	inline static void set(register uint8_t val) __attribute__ ((always_inline)) { _PORT::r() = val; }
+    inline static void hi() __attribute__((always_inline)) { _PORT::r() |= _MASK; }
+    inline static void lo() __attribute__((always_inline)) { _PORT::r() &= ~_MASK; }
+    inline static void set(register uint8_t val) __attribute__((always_inline)) { _PORT::r() = val; }
 
-	inline static void strobe() __attribute__ ((always_inline)) { toggle(); toggle(); }
+    inline static void strobe() __attribute__((always_inline)) {
+        toggle();
+        toggle();
+    }
 
-	inline static void toggle() __attribute__ ((always_inline)) { _PIN::r() = _MASK; }
+    inline static void toggle() __attribute__((always_inline)) { _PIN::r() = _MASK; }
 
-	inline static void hi(register port_ptr_t /*port*/) __attribute__ ((always_inline)) { hi(); }
-	inline static void lo(register port_ptr_t /*port*/) __attribute__ ((always_inline)) { lo(); }
-	inline static void fastset(register port_ptr_t /*port*/, register uint8_t val) __attribute__ ((always_inline)) { set(val); }
+    inline static void hi(register port_ptr_t /*port*/) __attribute__((always_inline)) { hi(); }
+    inline static void lo(register port_ptr_t /*port*/) __attribute__((always_inline)) { lo(); }
+    inline static void fastset(register port_ptr_t /*port*/, register uint8_t val) __attribute__((always_inline)) { set(val); }
 
-	inline static port_t hival() __attribute__ ((always_inline)) { return _PORT::r() | _MASK; }
-	inline static port_t loval() __attribute__ ((always_inline)) { return _PORT::r() & ~_MASK; }
-	inline static port_ptr_t port() __attribute__ ((always_inline)) { return &_PORT::r(); }
-	inline static port_t mask() __attribute__ ((always_inline)) { return _MASK; }
-};
+    inline static port_t hival() __attribute__((always_inline)) { return _PORT::r() | _MASK; }
+    inline static port_t loval() __attribute__((always_inline)) { return _PORT::r() & ~_MASK; }
+    inline static port_ptr_t port() __attribute__((always_inline)) { return &_PORT::r(); }
+    inline static port_t mask() __attribute__((always_inline)) { return _MASK; }
+    };
 
-
-
-/// AVR definitions for pins.  Getting around  the fact that I can't pass GPIO register addresses in as template arguments by instead creating
-/// a custom type for each GPIO register with a single, static, aggressively inlined function that returns that specific GPIO register.  A similar
-/// trick is used a bit further below for the ARM GPIO registers (of which there are far more than on AVR!)
-typedef volatile uint8_t & reg8_t;
+    /// AVR definitions for pins.  Getting around  the fact that I can't pass GPIO register addresses in as template arguments by instead creating
+    /// a custom type for each GPIO register with a single, static, aggressively inlined function that returns that specific GPIO register.  A similar
+    /// trick is used a bit further below for the ARM GPIO registers (of which there are far more than on AVR!)
+    typedef volatile uint8_t &reg8_t;
 #define _R(T) struct __gen_struct_ ## T
 #define _RD8(T) struct __gen_struct_ ## T { static inline reg8_t r() { return T; }};
 #define _FL_IO(L,C) _RD8(DDR ## L); _RD8(PORT ## L); _RD8(PIN ## L); _FL_DEFINE_PORT3(L, C, _R(PORT ## L));
@@ -355,7 +357,5 @@ _FL_DEFPIN(28, 6, B); _FL_DEFPIN(29, 6, D); _FL_DEFPIN(30, 5, D);
 #endif
 
 #endif // FASTLED_FORCE_SOFTWARE_PINS
-
-FASTLED_NAMESPACE_END
 
 #endif // __INC_FASTPIN_AVR_H

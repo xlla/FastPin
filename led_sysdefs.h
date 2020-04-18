@@ -1,10 +1,6 @@
 #ifndef __INC_LED_SYSDEFS_H
 #define __INC_LED_SYSDEFS_H
 
-#include "FastLED.h"
-
-#include "fastled_config.h"
-
 #if defined(NRF51) || defined(__RFduino__) || defined (__Simblee__)
 #include "platforms/arm/nrf51/led_sysdefs_arm_nrf51.h"
 #elif defined(NRF52_SERIES)

@@ -1,9 +1,8 @@
 #ifndef __INC_FASTPIN_H
 #define __INC_FASTPIN_H
 
-#include "FastLED.h"
-
 #include "led_sysdefs.h"
+#include "common_defs.h"
 #include <stddef.h>
 
 #pragma GCC diagnostic push
@@ -11,8 +10,6 @@
 
 ///@file fastpin.h
 /// Class base definitions for defining fast pin access
-
-FASTLED_NAMESPACE_BEGIN
 
 #define NO_PIN 255
 
@@ -23,122 +20,135 @@ FASTLED_NAMESPACE_BEGIN
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class Selectable {
-public:
-	virtual void select() = 0;
-	virtual void release() = 0;
-	virtual bool isSelected() = 0;
+  public:
+    virtual void select() = 0;
+    virtual void release() = 0;
+    virtual bool isSelected() = 0;
 };
 
 #if !defined(FASTLED_NO_PINMAP)
 
 class Pin : public Selectable {
-	volatile RwReg *mPort;
-	volatile RoReg *mInPort;
-	RwReg mPinMask;
-	uint8_t mPin;
+    volatile RwReg *mPort;
+    volatile RoReg *mInPort;
+    RwReg mPinMask;
+    uint8_t mPin;
 
-	void _init() {
-		mPinMask = digitalPinToBitMask(mPin);
-		mPort = (volatile RwReg*)portOutputRegister(digitalPinToPort(mPin));
-		mInPort = (volatile RoReg*)portInputRegister(digitalPinToPort(mPin));
-	}
-public:
-	Pin(int pin) : mPin(pin) { _init(); }
+    void _init() {
+        mPinMask = digitalPinToBitMask(mPin);
+        mPort = (volatile RwReg *)portOutputRegister(digitalPinToPort(mPin));
+        mInPort = (volatile RoReg *)portInputRegister(digitalPinToPort(mPin));
+    }
 
-	typedef volatile RwReg * port_ptr_t;
-	typedef RwReg port_t;
+  public:
+    Pin(int pin) : mPin(pin) { _init(); }
 
-	inline void setOutput() { pinMode(mPin, OUTPUT); }
-	inline void setInput() { pinMode(mPin, INPUT); }
+    typedef volatile RwReg *port_ptr_t;
+    typedef RwReg port_t;
 
-	inline void hi() __attribute__ ((always_inline)) { *mPort |= mPinMask; }
-	inline void lo() __attribute__ ((always_inline)) { *mPort &= ~mPinMask; }
+    inline void setOutput() { pinMode(mPin, OUTPUT); }
+    inline void setInput() { pinMode(mPin, INPUT); }
 
-	inline void strobe() __attribute__ ((always_inline)) { toggle(); toggle(); }
-	inline void toggle() __attribute__ ((always_inline)) { *mInPort = mPinMask; }
+    inline void hi() __attribute__((always_inline)) { *mPort |= mPinMask; }
+    inline void lo() __attribute__((always_inline)) { *mPort &= ~mPinMask; }
 
-	inline void hi(register port_ptr_t port) __attribute__ ((always_inline)) { *port |= mPinMask; }
-	inline void lo(register port_ptr_t port) __attribute__ ((always_inline)) { *port &= ~mPinMask; }
-	inline void set(register port_t val) __attribute__ ((always_inline)) { *mPort = val; }
+    inline void strobe() __attribute__((always_inline)) {
+        toggle();
+        toggle();
+    }
+    inline void toggle() __attribute__((always_inline)) { *mInPort = mPinMask; }
 
-	inline void fastset(register port_ptr_t port, register port_t val) __attribute__ ((always_inline)) { *port  = val; }
+    inline void hi(register port_ptr_t port) __attribute__((always_inline)) { *port |= mPinMask; }
+    inline void lo(register port_ptr_t port) __attribute__((always_inline)) { *port &= ~mPinMask; }
+    inline void set(register port_t val) __attribute__((always_inline)) { *mPort = val; }
 
-	port_t hival() __attribute__ ((always_inline)) { return *mPort | mPinMask;  }
-	port_t loval() __attribute__ ((always_inline)) { return *mPort & ~mPinMask; }
-	port_ptr_t  port() __attribute__ ((always_inline)) { return mPort; }
-	port_t mask() __attribute__ ((always_inline)) { return mPinMask; }
+    inline void fastset(register port_ptr_t port, register port_t val) __attribute__((always_inline)) { *port = val; }
 
-	virtual void select() { hi(); }
-	virtual void release() { lo(); }
-	virtual bool isSelected() { return (*mPort & mPinMask) == mPinMask; }
+    port_t hival() __attribute__((always_inline)) { return *mPort | mPinMask; }
+    port_t loval() __attribute__((always_inline)) { return *mPort & ~mPinMask; }
+    port_ptr_t port() __attribute__((always_inline)) { return mPort; }
+    port_t mask() __attribute__((always_inline)) { return mPinMask; }
+
+    virtual void select() { hi(); }
+    virtual void release() { lo(); }
+    virtual bool isSelected() { return (*mPort & mPinMask) == mPinMask; }
 };
 
 class OutputPin : public Pin {
-public:
-	OutputPin(int pin) : Pin(pin) { setOutput(); }
+  public:
+    OutputPin(int pin) : Pin(pin) { setOutput(); }
 };
 
 class InputPin : public Pin {
-public:
-	InputPin(int pin) : Pin(pin) { setInput(); }
+  public:
+    InputPin(int pin) : Pin(pin) { setInput(); }
 };
 
 #else
 // This is the empty code version of the raw pin class, method bodies should be filled in to Do The Right Thing[tm] when making this
 // available on a new platform
 class Pin : public Selectable {
-	volatile RwReg *mPort;
-	volatile RoReg *mInPort;
-	RwReg mPinMask;
-	uint8_t mPin;
+    volatile RwReg *mPort;
+    volatile RoReg *mInPort;
+    RwReg mPinMask;
+    uint8_t mPin;
 
-	void _init() {
-		// TODO: fill in init on a new platform
-		mPinMask = 0;
-		mPort = NULL;
-		mInPort = NULL;
-	}
-public:
-	Pin(int pin) : mPin(pin) { _init(); }
+    void _init() {
+        // TODO: fill in init on a new platform
+        mPinMask = 0;
+        mPort = NULL;
+        mInPort = NULL;
+    }
 
-	void setPin(int pin) { mPin = pin; _init(); }
+  public:
+    Pin(int pin) : mPin(pin) { _init(); }
 
-	typedef volatile RwReg * port_ptr_t;
-	typedef RwReg port_t;
+    void setPin(int pin) {
+        mPin = pin;
+        _init();
+    }
 
-	inline void setOutput() { /* TODO: Set pin output */ }
-	inline void setInput() { /* TODO: Set pin input */ }
+    typedef volatile RwReg *port_ptr_t;
+    typedef RwReg port_t;
 
-	inline void hi() __attribute__ ((always_inline)) { *mPort |= mPinMask; }
-	inline void lo() __attribute__ ((always_inline)) { *mPort &= ~mPinMask; }
+    inline void setOutput() { /* TODO: Set pin output */
+    }
+    inline void setInput() { /* TODO: Set pin input */
+    }
 
-	inline void strobe() __attribute__ ((always_inline)) { toggle(); toggle(); }
-	inline void toggle() __attribute__ ((always_inline)) { *mInPort = mPinMask; }
+    inline void hi() __attribute__((always_inline)) { *mPort |= mPinMask; }
+    inline void lo() __attribute__((always_inline)) { *mPort &= ~mPinMask; }
 
-	inline void hi(register port_ptr_t port) __attribute__ ((always_inline)) { *port |= mPinMask; }
-	inline void lo(register port_ptr_t port) __attribute__ ((always_inline)) { *port &= ~mPinMask; }
-	inline void set(register port_t val) __attribute__ ((always_inline)) { *mPort = val; }
+    inline void strobe() __attribute__((always_inline)) {
+        toggle();
+        toggle();
+    }
+    inline void toggle() __attribute__((always_inline)) { *mInPort = mPinMask; }
 
-	inline void fastset(register port_ptr_t port, register port_t val) __attribute__ ((always_inline)) { *port  = val; }
+    inline void hi(register port_ptr_t port) __attribute__((always_inline)) { *port |= mPinMask; }
+    inline void lo(register port_ptr_t port) __attribute__((always_inline)) { *port &= ~mPinMask; }
+    inline void set(register port_t val) __attribute__((always_inline)) { *mPort = val; }
 
-	port_t hival() __attribute__ ((always_inline)) { return *mPort | mPinMask;  }
-	port_t loval() __attribute__ ((always_inline)) { return *mPort & ~mPinMask; }
-	port_ptr_t  port() __attribute__ ((always_inline)) { return mPort; }
-	port_t mask() __attribute__ ((always_inline)) { return mPinMask; }
+    inline void fastset(register port_ptr_t port, register port_t val) __attribute__((always_inline)) { *port = val; }
 
-	virtual void select() { hi(); }
-	virtual void release() { lo(); }
-	virtual bool isSelected() { return (*mPort & mPinMask) == mPinMask; }
+    port_t hival() __attribute__((always_inline)) { return *mPort | mPinMask; }
+    port_t loval() __attribute__((always_inline)) { return *mPort & ~mPinMask; }
+    port_ptr_t port() __attribute__((always_inline)) { return mPort; }
+    port_t mask() __attribute__((always_inline)) { return mPinMask; }
+
+    virtual void select() { hi(); }
+    virtual void release() { lo(); }
+    virtual bool isSelected() { return (*mPort & mPinMask) == mPinMask; }
 };
 
 class OutputPin : public Pin {
-public:
-	OutputPin(int pin) : Pin(pin) { setOutput(); }
+  public:
+    OutputPin(int pin) : Pin(pin) { setOutput(); }
 };
 
 class InputPin : public Pin {
-public:
-	InputPin(int pin) : Pin(pin) { setInput(); }
+  public:
+    InputPin(int pin) : Pin(pin) { setInput(); }
 };
 
 #endif
@@ -158,112 +168,99 @@ public:
 /// Note that these classes are all static functions.  So the proper usage is Pin<13>::hi(); or such.  Instantiating objects is not recommended,
 /// as passing Pin objects around will likely -not- have the effect you're expecting.
 #ifdef FASTLED_FORCE_SOFTWARE_PINS
-template<uint8_t PIN> class FastPin {
-	static RwReg sPinMask;
-	static volatile RwReg *sPort;
-	static volatile RoReg *sInPort;
-	static void _init() {
+template <uint8_t PIN>
+class FastPin {
+    static RwReg sPinMask;
+    static volatile RwReg *sPort;
+    static volatile RoReg *sInPort;
+    static void _init() {
 #if !defined(FASTLED_NO_PINMAP)
-		sPinMask = digitalPinToBitMask(PIN);
-		sPort = portOutputRegister(digitalPinToPort(PIN));
-		sInPort = portInputRegister(digitalPinToPort(PIN));
+        sPinMask = digitalPinToBitMask(PIN);
+        sPort = portOutputRegister(digitalPinToPort(PIN));
+        sInPort = portInputRegister(digitalPinToPort(PIN));
 #endif
-	}
-public:
-	typedef volatile RwReg * port_ptr_t;
-	typedef RwReg port_t;
+    }
 
-	inline static void setOutput() { _init(); pinMode(PIN, OUTPUT); }
-	inline static void setInput() { _init(); pinMode(PIN, INPUT); }
+  public:
+    typedef volatile RwReg *port_ptr_t;
+    typedef RwReg port_t;
 
-	inline static void hi() __attribute__ ((always_inline)) { *sPort |= sPinMask; }
-	inline static void lo() __attribute__ ((always_inline)) { *sPort &= ~sPinMask; }
+    inline static void setOutput() {
+        _init();
+        pinMode(PIN, OUTPUT);
+    }
+    inline static void setInput() {
+        _init();
+        pinMode(PIN, INPUT);
+    }
 
-	inline static void strobe() __attribute__ ((always_inline)) { toggle(); toggle(); }
+    inline static void hi() __attribute__((always_inline)) { *sPort |= sPinMask; }
+    inline static void lo() __attribute__((always_inline)) { *sPort &= ~sPinMask; }
 
-	inline static void toggle() __attribute__ ((always_inline)) { *sInPort = sPinMask; }
+    inline static void strobe() __attribute__((always_inline)) {
+        toggle();
+        toggle();
+    }
 
-	inline static void hi(register port_ptr_t port) __attribute__ ((always_inline)) { *port |= sPinMask; }
-	inline static void lo(register port_ptr_t port) __attribute__ ((always_inline)) { *port &= ~sPinMask; }
-	inline static void set(register port_t val) __attribute__ ((always_inline)) { *sPort = val; }
+    inline static void toggle() __attribute__((always_inline)) { *sInPort = sPinMask; }
 
-	inline static void fastset(register port_ptr_t port, register port_t val) __attribute__ ((always_inline)) { *port  = val; }
+    inline static void hi(register port_ptr_t port) __attribute__((always_inline)) { *port |= sPinMask; }
+    inline static void lo(register port_ptr_t port) __attribute__((always_inline)) { *port &= ~sPinMask; }
+    inline static void set(register port_t val) __attribute__((always_inline)) { *sPort = val; }
 
-	static port_t hival() __attribute__ ((always_inline)) { return *sPort | sPinMask;  }
-	static port_t loval() __attribute__ ((always_inline)) { return *sPort & ~sPinMask; }
-	static port_ptr_t  port() __attribute__ ((always_inline)) { return sPort; }
-	static port_t mask() __attribute__ ((always_inline)) { return sPinMask; }
+    inline static void fastset(register port_ptr_t port, register port_t val) __attribute__((always_inline)) { *port = val; }
+
+    static port_t hival() __attribute__((always_inline)) { return *sPort | sPinMask; }
+    static port_t loval() __attribute__((always_inline)) { return *sPort & ~sPinMask; }
+    static port_ptr_t port() __attribute__((always_inline)) { return sPort; }
+    static port_t mask() __attribute__((always_inline)) { return sPinMask; }
 };
 
-template<uint8_t PIN> RwReg FastPin<PIN>::sPinMask;
-template<uint8_t PIN> volatile RwReg *FastPin<PIN>::sPort;
-template<uint8_t PIN> volatile RoReg *FastPin<PIN>::sInPort;
+template <uint8_t PIN>
+RwReg FastPin<PIN>::sPinMask;
+template <uint8_t PIN>
+volatile RwReg *FastPin<PIN>::sPort;
+template <uint8_t PIN>
+volatile RoReg *FastPin<PIN>::sInPort;
 
 #else
 
-template<uint8_t PIN> class FastPin {
-	constexpr static bool validpin() { return false; }
+template <uint8_t PIN>
+class FastPin {
+    constexpr static bool validpin() { return false; }
 
-	static_assert(validpin(), "Invalid pin specified");
+    static_assert(validpin(), "Invalid pin specified");
 
-	static void _init() {
-	}
-public:
-	typedef volatile RwReg * port_ptr_t;
-	typedef RwReg port_t;
+    static void _init() {
+    }
 
-	inline static void setOutput() { }
-	inline static void setInput() { }
+  public:
+    typedef volatile RwReg *port_ptr_t;
+    typedef RwReg port_t;
 
-	inline static void hi() __attribute__ ((always_inline)) { }
-	inline static void lo() __attribute__ ((always_inline)) { }
+    inline static void setOutput() {}
+    inline static void setInput() {}
 
-	inline static void strobe() __attribute__ ((always_inline)) { }
+    inline static void hi() __attribute__((always_inline)) {}
+    inline static void lo() __attribute__((always_inline)) {}
 
-	inline static void toggle() __attribute__ ((always_inline)) { }
+    inline static void strobe() __attribute__((always_inline)) {}
 
-	inline static void hi(register port_ptr_t port) __attribute__ ((always_inline)) { }
-	inline static void lo(register port_ptr_t port) __attribute__ ((always_inline)) { }
-	inline static void set(register port_t val) __attribute__ ((always_inline)) { }
+    inline static void toggle() __attribute__((always_inline)) {}
 
-	inline static void fastset(register port_ptr_t port, register port_t val) __attribute__ ((always_inline)) { }
+    inline static void hi(register port_ptr_t port) __attribute__((always_inline)) {}
+    inline static void lo(register port_ptr_t port) __attribute__((always_inline)) {}
+    inline static void set(register port_t val) __attribute__((always_inline)) {}
 
-	static port_t hival() __attribute__ ((always_inline)) { return 0; }
-	static port_t loval() __attribute__ ((always_inline)) { return 0;}
-	static port_ptr_t  port() __attribute__ ((always_inline)) { return NULL; }
-	static port_t mask() __attribute__ ((always_inline)) { return 0; }
+    inline static void fastset(register port_ptr_t port, register port_t val) __attribute__((always_inline)) {}
+
+    static port_t hival() __attribute__((always_inline)) { return 0; }
+    static port_t loval() __attribute__((always_inline)) { return 0; }
+    static port_ptr_t port() __attribute__((always_inline)) { return NULL; }
+    static port_t mask() __attribute__((always_inline)) { return 0; }
 };
 
 #endif
-
-template<uint8_t PIN> class FastPinBB : public FastPin<PIN> {};
-
-typedef volatile uint32_t & reg32_t;
-typedef volatile uint32_t * ptr_reg32_t;
-
-// Utility templates for tracking down information about pins and ports
-template<uint8_t port> struct __FL_PORT_INFO {
-	static bool hasPort() { return 0; }
-	static const char *portName() { return "--"; }
-	static const void *portAddr() { return NULL; }
-};
-
-// Give us our instantiations for defined ports - we're going to abuse this later for
-// auto discovery of pin/port mappings for new variants.  Use _FL_DEFINE_PORT for ports that
-// are numeric in nature, e.g. GPIO0, GPIO1.  Use _FL_DEFINE_PORT3 for ports that are letters.
-// The first parameter will be the letter, the second parameter will be an integer/counter of smoe kind
-// (this is because attempts to turn macro parameters into character constants break in some compilers)
-#define _FL_DEFINE_PORT(L, BASE) template<> struct __FL_PORT_INFO<L> { static bool hasPort() { return 1; } \
-										static const char *portName() { return #L; } \
-										typedef BASE __t_baseType;  \
-										static const void *portAddr() { return (void*)&__t_baseType::r(); } };
-
-#define _FL_DEFINE_PORT3(L, LC, BASE) template<> struct __FL_PORT_INFO<LC> { static bool hasPort() { return 1; } \
-										static const char *portName() { return #L; } \
-										typedef BASE __t_baseType;  \
-										static const void *portAddr() { return (void*)&__t_baseType::r(); } };
-
-FASTLED_NAMESPACE_END
 
 #pragma GCC diagnostic pop
 

@@ -9,8 +9,9 @@
 
 #define FASTLED_SPI_BYTE_ONLY
 
-#include <avr/io.h>
+#include "fastpin_avr.h"
 #include <avr/interrupt.h> // for cli/se definitions
+#include <avr/io.h>
 
 // Define the register types
 typedef volatile       uint8_t RoReg; /**< Read only 8-bit register (volatile const unsigned int) */

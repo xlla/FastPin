@@ -1,6 +1,6 @@
 #pragma once
 
-FASTLED_NAMESPACE_BEGIN
+#include "../../../common_defs.h"
 
 template<uint8_t PIN, uint32_t MASK> class _ESPPIN {
 
@@ -111,5 +111,3 @@ _FL_DEFPIN(32);
 _FL_DEFPIN(33);
 
 #define HAS_HARDWARE_PIN_SUPPORT
-
-FASTLED_NAMESPACE_END

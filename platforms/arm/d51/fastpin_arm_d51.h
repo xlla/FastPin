@@ -1,14 +1,14 @@
 #ifndef __INC_FASTPIN_ARM_D51_H
 #define __INC_FASTPIN_ARM_D51_H
 
-FASTLED_NAMESPACE_BEGIN
-
 #if defined(FASTLED_FORCE_SOFTWARE_PINS)
 #warning "Software pin support forced, pin access will be slightly slower."
 #define NO_HARDWARE_PIN_SUPPORT
 #undef HAS_HARDWARE_PIN_SUPPORT
 
 #else
+
+#include "../../../common_defs.h"
 
 /// Template definition for STM32 style ARM pins, providing direct access to the various GPIO registers.  Note that this
 /// uses the full port GPIO registers.  In theory, in some way, bit-band register access -should- be faster, however I have found
@@ -20,7 +20,7 @@ public:
   typedef volatile uint32_t * port_ptr_t;
   typedef uint32_t port_t;
 
-  #if 0
+#if 0
   inline static void setOutput() {
     if(_BIT<8) {
       _CRL::r() = (_CRL::r() & (0xF << (_BIT*4)) | (0x1 << (_BIT*4));
@@ -29,7 +29,7 @@ public:
     }
   }
   inline static void setInput() { /* TODO */ } // TODO: preform MUX config { _PDDR::r() &= ~_MASK; }
-  #endif
+#endif
 
   inline static void setOutput() { pinMode(PIN, OUTPUT); } // TODO: perform MUX config { _PDDR::r() |= _MASK; }
   inline static void setInput() { pinMode(PIN, INPUT); } // TODO: preform MUX config { _PDDR::r() &= ~_MASK; }
@@ -132,8 +132,5 @@ _FL_DEFPIN(23, 22, 1); _FL_DEFPIN(24,  23, 1); _FL_DEFPIN(25,  17, 0);
 
 
 #endif // FASTLED_FORCE_SOFTWARE_PINS
-
-FASTLED_NAMESPACE_END
-
 
 #endif // __INC_FASTPIN_ARM_D51_H

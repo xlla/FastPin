@@ -1,8 +1,6 @@
 #ifndef __FASTPIN_ARM_KL26_H
 #define __FASTPIN_ARM_KL26_H
 
-FASTLED_NAMESPACE_BEGIN
-
 #if defined(FASTLED_FORCE_SOFTWARE_PINS)
 #warning "Software pin support forced, pin access will be sloightly slower."
 #define NO_HARDWARE_PIN_SUPPORT
@@ -10,6 +8,7 @@ FASTLED_NAMESPACE_BEGIN
 
 #else
 
+#include "../../../common_defs.h"
 
 /// Template definition for teensy LC style ARM pins, providing direct access to the various GPIO registers.  Note that this
 /// uses the full port GPIO registers.  In theory, in some way, bit-band register access -should- be faster, however I have found
@@ -82,7 +81,5 @@ _FL_DEFPIN(24, 20, E); _FL_DEFPIN(25, 21, E); _FL_DEFPIN(26, 30, E);
 #endif
 
 #endif // FASTLED_FORCE_SOFTWARE_PINS
-
-FASTLED_NAMESPACE_END
 
 #endif // __INC_FASTPIN_ARM_K20

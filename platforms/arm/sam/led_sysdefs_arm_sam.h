@@ -31,6 +31,8 @@
 #define FASTLED_ACCURATE_CLOCK
 #endif
 
+#include "fastpin_arm_sam.h"
+
 // reusing/abusing cli/sei defs for due
 #define cli()  __disable_irq(); __disable_fault_irq();
 #define sei() __enable_irq(); __enable_fault_irq();

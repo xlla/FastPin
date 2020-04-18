@@ -21,6 +21,7 @@
 #include <stdint.h>
 #include <nrf51.h>
 #include <core_cm0.h>
+#include "led_sysdefs_arm_nrf51.h"
 
 typedef volatile uint32_t RoReg;
 typedef volatile uint32_t RwReg;

@@ -1,7 +1,10 @@
 #ifndef __FASTPIN_ARM_NRF51_H
 #define __FASTPIN_ARM_NRF51_H
 
+#include "../../../common_defs.h"
+
 #if defined(NRF51)
+
 /// Template definition for teensy 3.0 style ARM pins, providing direct access to the various GPIO registers.  Note that this
 /// uses the full port GPIO registers.  In theory, in some way, bit-band register access -should- be faster, however I have found
 /// that something about the way gcc does register allocation results in the bit-band code being slower.  It will need more fine tuning.

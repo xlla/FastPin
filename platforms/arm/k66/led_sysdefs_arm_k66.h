@@ -24,6 +24,7 @@
 // Get some system include files
 #include <avr/io.h>
 #include <avr/interrupt.h> // for cli/se definitions
+#include "fastpin_arm_k66.h"
 
 // Define the register types
 #if defined(ARDUINO) // && ARDUINO < 150

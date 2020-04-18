@@ -9,6 +9,8 @@
 // Use system millis timer
 #define FASTLED_HAS_MILLIS
 
+#include "fastpin_esp32.h"
+
 typedef volatile uint32_t RoReg;
 typedef volatile uint32_t RwReg;
 typedef unsigned long prog_uint32_t;

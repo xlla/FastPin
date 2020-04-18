@@ -1,6 +1,6 @@
 #pragma once
 
-FASTLED_NAMESPACE_BEGIN
+#include "../../../common_defs.h"
 
 struct FASTLED_ESP_IO {
   volatile uint32_t _GPO;
@@ -97,5 +97,3 @@ _FL_DEFPIN(8,15); _FL_DEFPIN(9,3); _FL_DEFPIN(10,1);
 #endif
 
 #define HAS_HARDWARE_PIN_SUPPORT
-
-#define FASTLED_NAMESPACE_END

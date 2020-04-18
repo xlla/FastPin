@@ -40,6 +40,8 @@
 #include <nrf_spim.h>   // for FastSPI
 #include <nrf_pwm.h>    // for Clockless
 #include <nrf_nvic.h>   // for Clockless / anything else using interrupts
+#include "fastpin_arm_nrf52_variants.h"
+#include "fastpin_arm_nrf52.h"
 typedef __I  uint32_t RoReg;
 typedef __IO uint32_t RwReg;
 

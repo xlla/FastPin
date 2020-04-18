@@ -4,6 +4,8 @@
 // use this to determine if found variant or not (avoid multiple boards at once)
 #undef __FASTPIN_ARM_NRF52_VARIANT_FOUND
 
+#include "../../../common_defs.h"
+
 // Adafruit Bluefruit nRF52832 Feather
 // From https://www.adafruit.com/package_adafruit_index.json
 #if defined (ARDUINO_NRF52832_FEATHER) 

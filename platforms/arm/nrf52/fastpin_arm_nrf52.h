@@ -71,6 +71,8 @@
 //
 */
 
+#include "../../../common_defs.h"
+
 // manually define two structures, to avoid fighting with preprocessor macros
 struct __generated_struct_NRF_P0 {
     FASTLED_NRF52_INLINE_ATTRIBUTE constexpr static uintptr_t r() {

@@ -1,14 +1,14 @@
 #ifndef __FASTPIN_ARM_MXRT1062_H
 #define __FASTPIN_ARM_MXRT1062_H
 
-FASTLED_NAMESPACE_BEGIN
-
 #if defined(FASTLED_FORCE_SOFTWARE_PINS)
 #warning "Software pin support forced, pin access will be slightly slower."
 #define NO_HARDWARE_PIN_SUPPORT
 #undef HAS_HARDWARE_PIN_SUPPORT
 
 #else
+
+#include "../../../common_defs.h"
 
 /// Template definition for teensy 4.0 style ARM pins, providing direct access to the various GPIO registers.  Note that this
 /// uses the full port GPIO registers.  It calls through to pinMode for setting input/output on pins
@@ -41,7 +41,6 @@ public:
 	inline static port_t mask() __attribute__ ((always_inline)) { return _MASK; }
   inline static uint32_t pinbit() __attribute__ ((always_inline)) { return _BIT; }
 };
-
 
 #define _R(T) struct __gen_struct_ ## T
 #define _RD32(T) struct __gen_struct_ ## T { static __attribute__((always_inline)) inline reg32_t r() { return T; } };
@@ -85,7 +84,5 @@ _FL_DEFPIN(36,13,8); _FL_DEFPIN(37,12,8); _FL_DEFPIN(38,17,8); _FL_DEFPIN(39,16,
 #endif // defined FASTLED_TEENSY4
 
 #endif // FASTLED_FORCE_SOFTWARE_PINSs
-
-FASTLED_NAMESPACE_END
 
 #endif
