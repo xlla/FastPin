@@ -185,6 +185,10 @@ class FastPin {
     typedef volatile RwReg *port_ptr_t;
     typedef RwReg port_t;
 
+    inline static bool digitalRead() __attribute__((always_inline)) {
+        return *sInPort & sPinMask;
+    }
+
     inline static void setOutput() {
         _init();
         pinMode(PIN, OUTPUT);

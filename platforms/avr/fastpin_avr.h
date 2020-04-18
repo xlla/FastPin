@@ -20,6 +20,10 @@ class _AVRPIN {
     typedef volatile uint8_t *port_ptr_t;
     typedef uint8_t port_t;
 
+    inline static bool digitalRead() __attribute__((always_inline)) {
+        return _PIN::r() & _MASK;
+    }
+
     inline static void setOutput() { _DDR::r() |= _MASK; }
     inline static void setInput() { _DDR::r() &= ~_MASK; }
 
