@@ -189,6 +189,10 @@ class FastPin {
         return *sInPort & sPinMask;
     }
 
+    inline static int analogRead() __attribute__((always_inline)) {
+        return analogRead(PIN);
+    }
+
     inline static void setOutput() {
         _init();
         pinMode(PIN, OUTPUT);
