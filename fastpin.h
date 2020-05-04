@@ -168,6 +168,11 @@ class InputPin : public Pin {
 /// Note that these classes are all static functions.  So the proper usage is Pin<13>::hi(); or such.  Instantiating objects is not recommended,
 /// as passing Pin objects around will likely -not- have the effect you're expecting.
 #ifdef FASTLED_FORCE_SOFTWARE_PINS
+
+static inline __attribute__((always_inline)) int _analogRead(uint8_t pin) {
+    return analogRead(pin);
+}
+
 template <uint8_t PIN>
 class FastPin {
     static RwReg sPinMask;
@@ -190,7 +195,7 @@ class FastPin {
     }
 
     inline static int analogRead() __attribute__((always_inline)) {
-        return analogRead(PIN);
+        return _analogRead(PIN);
     }
 
     inline static void setOutput() {

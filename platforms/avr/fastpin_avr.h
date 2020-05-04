@@ -10,6 +10,12 @@
 
 #include "../../common_defs.h"
 
+//TODO remove if analogRead was properly implemented
+#include <Arduino.h>
+static inline __attribute__((always_inline)) int _analogRead(uint8_t pin) {
+    return analogRead(pin);
+}
+
 #define AVR_PIN_CYCLES(_PIN) ((((int)FastPin<_PIN>::port())-0x20 < 64) ? 1 : 2)
 
 /// Class definition for a Pin where we know the port registers at compile time for said pin.  This allows us to make
@@ -36,6 +42,10 @@ class _AVRPIN {
         toggle();
     }
 
+    inline static int analogRead() __attribute__((always_inline)) {
+        return _analogRead(PIN);
+    }
+
     inline static void toggle() __attribute__((always_inline)) { _PIN::r() = _MASK; }
 
     inline static void hi(register port_ptr_t /*port*/) __attribute__((always_inline)) { hi(); }
@@ -46,7 +56,7 @@ class _AVRPIN {
     inline static port_t loval() __attribute__((always_inline)) { return _PORT::r() & ~_MASK; }
     inline static port_ptr_t port() __attribute__((always_inline)) { return &_PORT::r(); }
     inline static port_t mask() __attribute__((always_inline)) { return _MASK; }
-    };
+};
 
     /// AVR definitions for pins.  Getting around  the fact that I can't pass GPIO register addresses in as template arguments by instead creating
     /// a custom type for each GPIO register with a single, static, aggressively inlined function that returns that specific GPIO register.  A similar
