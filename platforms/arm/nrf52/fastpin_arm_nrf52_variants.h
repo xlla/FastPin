@@ -576,6 +576,47 @@
     _DEFPIN_ARM_IDENTITY_P0(30); // P0.30
     _DEFPIN_ARM_IDENTITY_P0(31); // P0.31
 #endif // defined(ARDUINO_GENERIC)
-
+#if defined(ARDUINO_GENERIC) && (\
+    defined(NRF52833_XXAA) \
+    )
+    #if defined(__FASTPIN_ARM_NRF52_VARIANT_FOUND)
+        #error "Cannot define more than one board at a time"
+    #else
+        #define __FASTPIN_ARM_NRF52_VARIANT_FOUND
+    #endif
+    #warning "Using micro:bit v2 board is an untested configuration -- test and let use know your results via https://github.com/FastLED/FastLED/issues"
+    _FL_DEFPIN( 0, 2, 0); // D0  is P0.xx (A0)
+    _FL_DEFPIN( 1, 3, 0); // D1  is P0.xx (A1)
+    _FL_DEFPIN( 2, 4, 0); // D2  is P0.xx (A2)
+    _FL_DEFPIN( 3, 31, 0); // D3  is P0.xx (COLR3)
+    _FL_DEFPIN( 4, 28, 0); // D4  is P0.xx (COLR1)
+    _FL_DEFPIN( 5, 14, 0); // D5  is P0.xx (BTN_A)
+    _FL_DEFPIN( 6, 5, 1); // D6  is P1.xx (COLR4)
+    _FL_DEFPIN( 7,  11, 0); // D7  is P0.xx (COLR2)
+    _FL_DEFPIN( 8,  10, 0); // D8  is P0.xx (GPIO1)
+    _FL_DEFPIN( 9,  9, 0); // D9  is P0.xx (GPIO2)
+    _FL_DEFPIN(10,  30, 0); // D10 is P0.xx (COL5R)
+    _FL_DEFPIN(11,  23, 0); // D11 is P0.xx (BTN_B)
+    _FL_DEFPIN(12,  12, 0); // D12 is P0.xx (GPIO4)
+    _FL_DEFPIN(13,  17, 0); // D13 is P0.xx (SPI SCK)
+    _FL_DEFPIN(14,  1, 0); // D14 is P0.xx (SPI MISO)
+    _FL_DEFPIN(15,  13, 0); // D15 is P0.xx (SPI MOSI)
+    _FL_DEFPIN(16,  2, 1); // D16 is P`.xx (GPIO3)
+    //_FL_DEFPIN(17, 10, 0); // D17 is P0.xx (NFC2, Not connected)
+    // _FL_DEFPIN(18, 11, 0); // D18 is P0.xx (RXD)
+    _FL_DEFPIN(19, 26, 0); // D19 is P0.xx (I2C SCL)
+    _FL_DEFPIN(20, 0, 1); // D20 is P1.xx (I2C SDA)
+    // _FL_DEFPIN(21, 14, 0); // D21 is P0.xx (SPI MISO)
+    // _FL_DEFPIN(22, 15, 0); // D22 is P0.xx (SPI MOSI)
+    // _FL_DEFPIN(23, 16, 0); // D23 is P0.xx (SPI SCK )
+    // _FL_DEFPIN(24, 17, 0); // D24 is P0.xx (A0)
+    // _FL_DEFPIN(25, 18, 0); // D25 is P0.xx (A1)
+    // _FL_DEFPIN(26, 19, 0); // D26 is P0.xx (A2)
+    // _FL_DEFPIN(27, 20, 0); // D27 is P0.xx (A3)
+    //_FL_DEFPIN(28, 22, 0); // D28 is P0.xx (A4, near radio!)
+    //_FL_DEFPIN(29, 23, 0); // D29 is P0.xx (A5, near radio!)
+    // _FL_DEFPIN(30, 24, 0); // D30 is P0.xx
+    // _FL_DEFPIN(31, 21, 0); // D31 is P0.21 (RESET)
+#endif // defined(ARDUINO_GENERIC)
 
 #endif // __FASTPIN_ARM_NRF52_VARIANTS_H
