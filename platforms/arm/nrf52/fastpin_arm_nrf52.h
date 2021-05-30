@@ -72,6 +72,7 @@
 */
 
 #include "../../../common_defs.h"
+#include "hal/nrf_gpio.h"
 
 // manually define two structures, to avoid fighting with preprocessor macros
 struct __generated_struct_NRF_P0 {
